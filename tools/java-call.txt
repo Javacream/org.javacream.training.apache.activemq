@@ -1,0 +1,2 @@
+java -cp 'PATH_TO/simulation.jar'  org.javacream.training.jvm.simulation.application.GcSimulation
+
