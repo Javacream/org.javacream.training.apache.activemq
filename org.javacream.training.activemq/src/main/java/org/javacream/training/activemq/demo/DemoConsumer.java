@@ -21,7 +21,7 @@ public class DemoConsumer {
 		Connection connection = connectionFactory.createConnection();
 		session = connection.createSession(false,
 				Session.AUTO_ACKNOWLEDGE);
-		Destination destination = session.createTopic("DEMO_TOPIC42");
+		Destination destination = session.createQueue("DEMO");
 
 		connection.start();
 		MessageConsumer consumer = session.createConsumer(destination);

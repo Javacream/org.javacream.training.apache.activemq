@@ -21,13 +21,14 @@ public class DemoProducer {
 		Connection connection = connectionFactory.createConnection();
 		Session session = connection.createSession(false,
 				Session.AUTO_ACKNOWLEDGE);
-		Destination destination = session.createTopic("DEMO_TOPIC");
+		Destination destination = session.createQueue("DEMO");
 		Message request = session.createMessage();
-		request.setStringProperty("message", "Hello!");
+		request.setStringProperty("payload", "Hugo!");
 		
 		MessageProducer messageProducer = session.createProducer(destination);
 		messageProducer.send(request);
 		messageProducer.close();
+		session.close();
 		connection.close();
 	}
 
