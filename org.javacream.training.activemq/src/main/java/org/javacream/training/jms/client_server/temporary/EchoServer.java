@@ -1,16 +1,18 @@
-package org.javacream.training.activemq.advisory;
+package org.javacream.training.jms.client_server.temporary;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
+import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import org.javacream.training.util.jms.JmsUtil;
 
-public class AdvisoryConsumer {
+public class EchoServer {
 
 	private static Session session;
 
@@ -20,12 +22,12 @@ public class AdvisoryConsumer {
 
 		session = connection.createSession(false,
 				Session.AUTO_ACKNOWLEDGE);
-		Destination destination = session.createTopic("ActiveMQ.Advisory.Queue");
+		Destination destination = session.createQueue(EchoConstants.REQUEST_DESTINATION);
 
 
 		connection.start();
 		MessageConsumer consumer = session.createConsumer(destination);
-		consumer.setMessageListener(new AdvisoryMessageListener());
+		consumer.setMessageListener(new DemoMessageListener());
 		// consumer.close();
 		// connection.close();
 
@@ -35,16 +37,23 @@ public class AdvisoryConsumer {
 		}
 	}
 
-	private static class AdvisoryMessageListener implements MessageListener {
+	private static class DemoMessageListener implements MessageListener {
 
 		@Override
 		public void onMessage(Message receivedMessage) {
 			try {
+				String payload = receivedMessage.getStringProperty(EchoConstants.PARAM_KEY);
 				System.out.println("Received message: "
-						+ receivedMessage);
-			} catch (Exception e) {
+						+ payload);
+				MessageProducer producer = session.createProducer(receivedMessage.getJMSReplyTo());
+				Message response = session.createMessage();
+				response.setStringProperty(EchoConstants.RESULT_KEY, "OK, echoing payload " + payload);
+				producer.send(response);
+				producer.close();
+			} catch (JMSException e) {
 				e.printStackTrace();
 			}
+			
 		}
 
 	}

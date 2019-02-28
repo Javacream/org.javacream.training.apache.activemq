@@ -1,8 +1,9 @@
-package org.javacream.training.activemq.advisory;
+package org.javacream.training.activemq.messagegroup;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
@@ -10,7 +11,7 @@ import javax.jms.Session;
 
 import org.javacream.training.util.jms.JmsUtil;
 
-public class AdvisoryConsumer {
+public class Consumer {
 
 	private static Session session;
 
@@ -19,13 +20,13 @@ public class AdvisoryConsumer {
 		Connection connection = connectionFactory.createConnection();
 
 		session = connection.createSession(false,
-				Session.AUTO_ACKNOWLEDGE);
-		Destination destination = session.createTopic("ActiveMQ.Advisory.Queue");
+				Session.CLIENT_ACKNOWLEDGE);
+		Destination destination = session.createQueue(Constants.DESTINATION);
 
 
 		connection.start();
 		MessageConsumer consumer = session.createConsumer(destination);
-		consumer.setMessageListener(new AdvisoryMessageListener());
+		consumer.setMessageListener(new CorrelationMessageListener());
 		// consumer.close();
 		// connection.close();
 
@@ -35,16 +36,28 @@ public class AdvisoryConsumer {
 		}
 	}
 
-	private static class AdvisoryMessageListener implements MessageListener {
+	private static class CorrelationMessageListener implements MessageListener {
+
+		private int counter;
 
 		@Override
 		public void onMessage(Message receivedMessage) {
 			try {
-				System.out.println("Received message: "
-						+ receivedMessage);
-			} catch (Exception e) {
+				System.out.print("Received message by " + this + ", message="
+						+ receivedMessage.getStringProperty(Constants.PARAM_KEY) + ", messageGroupIdId=" + receivedMessage.getStringProperty(Constants.MESSAGE_GROUP_KEY));
+				counter ++;
+				if (counter == 3){
+					System.out.println(", acknowleded");
+					counter =0;
+					receivedMessage.acknowledge();
+				}
+				else{
+					System.out.println();
+				}
+			} catch (JMSException e) {
 				e.printStackTrace();
 			}
+			
 		}
 
 	}
