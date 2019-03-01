@@ -9,10 +9,10 @@ import javax.jms.Session;
 
 import org.javacream.training.util.jms.JmsUtil;
 
-public class DemoProducer {
+public class SimpleTopicProducer {
 
 	public static void main(String[] args) throws Exception {
-		new DemoProducer().testJms();
+		new SimpleTopicProducer().testJms();
 	}
 	public void testJms() throws Exception {
 		

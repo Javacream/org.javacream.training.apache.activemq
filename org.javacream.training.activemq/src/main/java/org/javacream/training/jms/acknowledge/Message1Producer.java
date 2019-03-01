@@ -1,26 +1,32 @@
-package org.javacream.training.jms.transactional;
+package org.javacream.training.jms.acknowledge;
 
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
 import org.javacream.training.util.jms.JmsBase;
 import org.javacream.training.util.jms.JmsUtil;
 
-public class Initiator extends JmsBase {
+public class Message1Producer extends JmsBase {
 
-	public Initiator() {
+	public Message1Producer() {
 		super(false, Session.AUTO_ACKNOWLEDGE);
 	}
 
 	public static void main(String[] args) {
-		new Initiator().execute();
+		new Message1Producer().execute();
 	}
 
 	public void execute() {
 		Message message = JmsUtil.createMessage(getSession());
+		try {
+			message.setStringProperty(AcknowledgeConstants.KEY, "1");
+		} catch (JMSException e) {
+			throw new RuntimeException(e);
+		}
 		Destination destination = JmsUtil.createQueue(getSession(),
-				"queue/transactional");
+				AcknowledgeConstants.DESTINATION_AGGREGATOR);
 		JmsUtil.send(getSession(), destination, message);
 		close();
 	}

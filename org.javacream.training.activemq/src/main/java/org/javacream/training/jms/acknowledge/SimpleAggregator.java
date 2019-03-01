@@ -8,13 +8,13 @@ import javax.jms.Session;
 import org.javacream.training.util.jms.JmsBase;
 import org.javacream.training.util.jms.JmsUtil;
 
-public class Dispatcher extends JmsBase {
+public class SimpleAggregator extends JmsBase {
 	private Message initiator1Message;
 	private Message initiator2Message;
 
-	public Dispatcher(){
+	public SimpleAggregator(){
 		super(false, Session.CLIENT_ACKNOWLEDGE);
-		JmsUtil.setListener(getSession(), JmsUtil.createQueue(getSession(), "JAVACREAM.ACKNOWLEDGE"), new DispatchingMessageListener());
+		JmsUtil.setListener(getSession(), JmsUtil.createQueue(getSession(), AcknowledgeConstants.DESTINATION_AGGREGATOR), new DispatchingMessageListener());
 		try {
 			getConnection().start();
 		} catch (JMSException e) {
@@ -23,7 +23,7 @@ public class Dispatcher extends JmsBase {
 	}
 
 	public static void main(String[] args) {
-		new Dispatcher();
+		new SimpleAggregator();
 	}
 	
 	private class DispatchingMessageListener implements MessageListener {
@@ -32,7 +32,7 @@ public class Dispatcher extends JmsBase {
 		public void onMessage(Message message) {
 			try {
 				String initiator;
-				initiator = message.getStringProperty("initiator");
+				initiator = message.getStringProperty(AcknowledgeConstants.KEY);
 				if ("1".equals(initiator)) {
 					initiator1Message = message;
 					System.out.println("received message from Initiator1");
@@ -45,7 +45,7 @@ public class Dispatcher extends JmsBase {
 					message.acknowledge();
 					JmsUtil.send(
 							getSession(),
-							JmsUtil.createQueue(getSession(), "JAVACREAM.ACKNOWLEDGE.BUSINESS"),
+							JmsUtil.createQueue(getSession(), AcknowledgeConstants.DESTINATION_CONSUMER),
 							message);
 					initiator1Message = null;
 					initiator2Message = null;

@@ -10,14 +10,14 @@ import javax.jms.Session;
 
 import org.javacream.training.util.jms.JmsUtil;
 
-public class EchoClient {
+public class MessageCorrelationEchoClient {
 
 	public static void main(String[] args) throws Exception {
-		new EchoClient().testJms();
+		new MessageCorrelationEchoClient().testJms();
 	}
 	public void testJms() throws Exception {
 		
-		String id = "Client" + this.hashCode();
+		String id = "Client" + Math.abs(Math.random());
 		
 		ConnectionFactory connectionFactory = JmsUtil.getConnectionFactory();
 		
@@ -25,20 +25,19 @@ public class EchoClient {
 
 		Session session = connection.createSession(false,
 				Session.AUTO_ACKNOWLEDGE);
-		Destination requestDestination = session.createQueue(EchoConstants.REQUEST_DESTINATION);
+		Destination requestDestination = session.createQueue(MessageCorrelationEchoConstants.REQUEST_DESTINATION);
 
-		Destination responseDestination = session.createQueue(EchoConstants.RESPONSE_DESTINATION);
+		Destination responseDestination = session.createQueue(MessageCorrelationEchoConstants.RESPONSE_DESTINATION);
 		Message request = session.createMessage();
-		request.setStringProperty(EchoConstants.CLIENT_IDENTIFIER_KEY, id);
-		request.setStringProperty(EchoConstants.PARAM_KEY, "Data from client " + id);
+		request.setJMSCorrelationID(id);
+		request.setStringProperty(MessageCorrelationEchoConstants.PARAM_KEY, "Data from client " + id);
 
 		MessageProducer messageProducer = session.createProducer(requestDestination);
 		messageProducer.send(request);
 		messageProducer.close();
 		connection.start();
-		MessageConsumer consumer = session.createConsumer(responseDestination, EchoConstants.CLIENT_IDENTIFIER_KEY
-				+ "='" + id + "'");
-		System.out.println(consumer.receive().getStringProperty(EchoConstants.RESULT_KEY));
+		MessageConsumer consumer = session.createConsumer(responseDestination, "JMSCorrelationID='" + id + "'");
+		System.out.println(consumer.receive().getStringProperty(MessageCorrelationEchoConstants.RESULT_KEY));
 		consumer.close();
 		connection.close();
 	}

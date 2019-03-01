@@ -1,34 +1,29 @@
-package org.javacream.training.jms.destination.topic.durable;
+package org.javacream.training.jms.destination.topic;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.Session;
-import javax.jms.Topic;
 
 import org.javacream.training.util.jms.JmsUtil;
 
-public class DemoConsumer {
+public class SimpleTopicConsumer {
 
 	private static Session session;
 
 	public static void main(String[] args) throws Exception {
 		ConnectionFactory connectionFactory = JmsUtil.getConnectionFactory();
 		Connection connection = connectionFactory.createConnection();
-
-		//
-		connection.setClientID("Sawitzki");
-		//
 		session = connection.createSession(false,
 				Session.AUTO_ACKNOWLEDGE);
-		Topic destination = session.createTopic("topic/Durable");
-
+		Destination destination = session.createTopic("topic/A");
 
 		connection.start();
-		MessageConsumer consumer = session.createDurableSubscriber(destination, "durableSubscriptionDemo");
+		MessageConsumer consumer = session.createConsumer(destination);
 		consumer.setMessageListener(new DemoMessageListener());
 		// consumer.close();
 		// connection.close();
@@ -44,8 +39,8 @@ public class DemoConsumer {
 		@Override
 		public void onMessage(Message receivedMessage) {
 			try {
-				System.out.println("###Received message: "
-						+ receivedMessage.getStringProperty("toEcho"));
+				System.out.println("BROKER 1: Received message: "
+						+ receivedMessage.getStringProperty("message"));
 			} catch (JMSException e) {
 				e.printStackTrace();
 			}

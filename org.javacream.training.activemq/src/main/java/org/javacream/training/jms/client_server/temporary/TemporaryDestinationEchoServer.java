@@ -12,7 +12,7 @@ import javax.jms.Session;
 
 import org.javacream.training.util.jms.JmsUtil;
 
-public class EchoServer {
+public class TemporaryDestinationEchoServer {
 
 	private static Session session;
 
@@ -22,7 +22,7 @@ public class EchoServer {
 
 		session = connection.createSession(false,
 				Session.AUTO_ACKNOWLEDGE);
-		Destination destination = session.createQueue(EchoConstants.REQUEST_DESTINATION);
+		Destination destination = session.createQueue(TemporaryDestinationEchoConstants.REQUEST_DESTINATION);
 
 
 		connection.start();
@@ -42,12 +42,12 @@ public class EchoServer {
 		@Override
 		public void onMessage(Message receivedMessage) {
 			try {
-				String payload = receivedMessage.getStringProperty(EchoConstants.PARAM_KEY);
+				String payload = receivedMessage.getStringProperty(TemporaryDestinationEchoConstants.PARAM_KEY);
 				System.out.println("Received message: "
 						+ payload);
 				MessageProducer producer = session.createProducer(receivedMessage.getJMSReplyTo());
 				Message response = session.createMessage();
-				response.setStringProperty(EchoConstants.RESULT_KEY, "OK, echoing payload " + payload);
+				response.setStringProperty(TemporaryDestinationEchoConstants.RESULT_KEY, "OK, echoing payload " + payload);
 				producer.send(response);
 				producer.close();
 			} catch (JMSException e) {

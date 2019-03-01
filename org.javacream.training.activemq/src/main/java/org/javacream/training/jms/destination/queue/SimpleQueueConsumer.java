@@ -1,4 +1,4 @@
-package org.javacream.training.jms.client_server.selector;
+package org.javacream.training.jms.destination.queue;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -7,12 +7,11 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import org.javacream.training.util.jms.JmsUtil;
 
-public class EchoServer {
+public class SimpleQueueConsumer {
 
 	private static Session session;
 
@@ -22,12 +21,13 @@ public class EchoServer {
 
 		session = connection.createSession(false,
 				Session.AUTO_ACKNOWLEDGE);
-		Destination destination = session.createQueue(EchoConstants.REQUEST_DESTINATION);
-
-
+		Destination destination = session.createQueue("queue/A");
 		connection.start();
 		MessageConsumer consumer = session.createConsumer(destination);
 		consumer.setMessageListener(new DemoMessageListener());
+		// consumer.close();
+		// connection.close();
+
 		Object sync = new Object();
 		synchronized (sync) {
 			sync.wait();
@@ -39,22 +39,11 @@ public class EchoServer {
 		@Override
 		public void onMessage(Message receivedMessage) {
 			try {
-				String data = receivedMessage.getStringProperty(EchoConstants.PARAM_KEY);
 				System.out.println("Received message: "
-						+ data);
-				Destination responseDestination = session.createQueue(EchoConstants.RESPONSE_DESTINATION);
-				MessageProducer producer = session.createProducer(responseDestination);
-				
-				Message response = session.createMessage();
-				
-				response.setStringProperty(EchoConstants.RESULT_KEY, "OK, echoing data " + data);
-				response.setStringProperty(EchoConstants.CLIENT_IDENTIFIER_KEY, receivedMessage.getStringProperty(EchoConstants.CLIENT_IDENTIFIER_KEY));
-				producer.send(response);
-				producer.close();
+						+ receivedMessage.getStringProperty("param"));
 			} catch (JMSException e) {
 				e.printStackTrace();
 			}
-			
 		}
 
 	}

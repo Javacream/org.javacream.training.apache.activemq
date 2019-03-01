@@ -6,7 +6,7 @@ import javax.jms.Session;
 
 import org.javacream.training.util.jms.JmsUtil;
 
-public class DemoConsumerUnsubscription {
+public class SimpleDurableConsumerUnsubscription {
 
 	private static Session session;
 

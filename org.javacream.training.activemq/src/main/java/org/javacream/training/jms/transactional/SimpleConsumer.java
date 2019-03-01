@@ -8,11 +8,11 @@ import javax.jms.Session;
 import org.javacream.training.util.jms.JmsBase;
 import org.javacream.training.util.jms.JmsUtil;
 
-public class Business extends JmsBase{
+public class SimpleConsumer extends JmsBase{
 
-	public Business(){
+	public SimpleConsumer(){
 		super(false, Session.AUTO_ACKNOWLEDGE);
-		JmsUtil.setListener(getSession(), JmsUtil.createQueue(getSession(), "queue/transactionalBusiness"), new BusinessMessageListener());
+		JmsUtil.setListener(getSession(), JmsUtil.createQueue(getSession(), TransactionalConstants.DESTINATION_CONSUMER), new SimpleMessageListener());
 		try {
 			getConnection().start();
 		} catch (JMSException e) {
@@ -21,10 +21,10 @@ public class Business extends JmsBase{
 
 	}
 	public static void main(String[] args) {
-		new Business();
+		new SimpleConsumer();
 	}
 	
-	private class BusinessMessageListener implements MessageListener{
+	private class SimpleMessageListener implements MessageListener{
 
 		@Override
 		public void onMessage(Message message) {

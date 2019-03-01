@@ -8,11 +8,11 @@ import javax.jms.Session;
 import org.javacream.training.util.jms.JmsBase;
 import org.javacream.training.util.jms.JmsUtil;
 
-public class Dispatcher extends JmsBase {
+public class TransactionalDispatcher extends JmsBase {
 
-	public Dispatcher(){
+	public TransactionalDispatcher(){
 		super(true, Session.CLIENT_ACKNOWLEDGE);
-		JmsUtil.setListener(getSession(), JmsUtil.createQueue(getSession(), "queue/transactional"), new DispatchingMessageListener());
+		JmsUtil.setListener(getSession(), JmsUtil.createQueue(getSession(), TransactionalConstants.DESTINATION_AGGREGATOR), new DispatchingMessageListener());
 		try {
 			getConnection().start();
 		} catch (JMSException e) {
@@ -21,7 +21,7 @@ public class Dispatcher extends JmsBase {
 	}
 
 	public static void main(String[] args) {
-		new Dispatcher();
+		new TransactionalDispatcher();
 	}
 	
 	private class DispatchingMessageListener implements MessageListener {
@@ -31,12 +31,12 @@ public class Dispatcher extends JmsBase {
 			try {
 			System.out.println("received message " + message);
 			if (message.getJMSRedelivered()){
-				JmsUtil.send(getSession(), JmsUtil.createQueue(getSession(), "queue/transactionalBusiness"), message);
-				System.out.println("commit");
+				JmsUtil.send(getSession(), JmsUtil.createQueue(getSession(), TransactionalConstants.DESTINATION_CONSUMER), message);
+				System.out.println("committing the redelivered message");
 				getSession().commit();
 			}else{
-				JmsUtil.send(getSession(), JmsUtil.createQueue(getSession(), "queue/transactionalBusiness"), message);
-				System.out.println("rollback");
+				JmsUtil.send(getSession(), JmsUtil.createQueue(getSession(), TransactionalConstants.DESTINATION_CONSUMER), message);
+				System.out.println("rollback for original message");
 				getSession().rollback();
 				
 			}
