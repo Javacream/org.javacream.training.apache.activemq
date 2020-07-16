@@ -28,4 +28,4 @@ An ActiveMQ image is not hosted on Docker Hub. So simply create it for yourself:
 * use sample from package `org.javacream.training.activemq.masterslave`
   * take a closer look at the failover-URL!
 * stop and start individual containers and check corresponding console output
-* after the playing with the sample cleanup executing `docker-compose down -v`
+* after examining the sample do some cleanup executing `docker-compose down -v`
