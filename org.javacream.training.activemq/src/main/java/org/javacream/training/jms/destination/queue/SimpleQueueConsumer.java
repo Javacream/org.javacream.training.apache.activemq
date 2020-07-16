@@ -21,7 +21,7 @@ public class SimpleQueueConsumer {
 
 		session = connection.createSession(false,
 				Session.AUTO_ACKNOWLEDGE);
-		Destination destination = session.createQueue("queue/A");
+		Destination destination = session.createQueue("JAVACREAM.QUEUE.A");
 		connection.start();
 		MessageConsumer consumer = session.createConsumer(destination);
 		consumer.setMessageListener(new DemoMessageListener());

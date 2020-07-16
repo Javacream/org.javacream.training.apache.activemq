@@ -13,12 +13,12 @@ public class SimpleDurableConsumerUnsubscription {
 	public static void main(String[] args) throws Exception {
 		ConnectionFactory connectionFactory = JmsUtil.getConnectionFactory();
 		Connection connection = connectionFactory.createConnection();
-		connection.setClientID("sawitzki");
+		connection.setClientID("javacream");
 
 		session = connection.createSession(false,
 				Session.AUTO_ACKNOWLEDGE);
 		connection.start();
-		session.unsubscribe("demo-messages");
+		session.unsubscribe("durableSubscriptionDemo");
 		
 		connection.close();
 	}

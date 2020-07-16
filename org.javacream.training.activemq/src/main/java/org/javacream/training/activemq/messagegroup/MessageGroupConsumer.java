@@ -1,4 +1,4 @@
-package org.javacream.training.jms.destination.topic;
+package org.javacream.training.activemq.messagegroup;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -11,20 +11,22 @@ import javax.jms.Session;
 
 import org.javacream.training.util.jms.JmsUtil;
 
-public class SimpleTopicConsumer {
+public class MessageGroupConsumer {
 
 	private static Session session;
 
 	public static void main(String[] args) throws Exception {
 		ConnectionFactory connectionFactory = JmsUtil.getConnectionFactory();
 		Connection connection = connectionFactory.createConnection();
+
 		session = connection.createSession(false,
-				Session.AUTO_ACKNOWLEDGE);
-		Destination destination = session.createTopic("JAVACREAM.TOPIC.A");
+				Session.CLIENT_ACKNOWLEDGE);
+		Destination destination = session.createQueue(MessageGroupConstants.DESTINATION);
+
 
 		connection.start();
 		MessageConsumer consumer = session.createConsumer(destination);
-		consumer.setMessageListener(new DemoMessageListener());
+		consumer.setMessageListener(new CorrelationMessageListener());
 		// consumer.close();
 		// connection.close();
 
@@ -34,16 +36,28 @@ public class SimpleTopicConsumer {
 		}
 	}
 
-	private static class DemoMessageListener implements MessageListener {
+	private static class CorrelationMessageListener implements MessageListener {
+
+		private int counter;
 
 		@Override
 		public void onMessage(Message receivedMessage) {
 			try {
-				System.out.println("BROKER 1: Received message: "
-						+ receivedMessage.getStringProperty("message"));
+				System.out.print("Received message by " + this + ", message="
+						+ receivedMessage.getStringProperty(MessageGroupConstants.PARAM_KEY) + ", messageGroupIdId=" + receivedMessage.getStringProperty(MessageGroupConstants.MESSAGE_GROUP_KEY));
+				counter ++;
+				if (counter == 3){
+					System.out.println(", acknowleded");
+					counter =0;
+					receivedMessage.acknowledge();
+				}
+				else{
+					System.out.println();
+				}
 			} catch (JMSException e) {
 				e.printStackTrace();
 			}
+			
 		}
 
 	}

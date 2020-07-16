@@ -1,4 +1,4 @@
-package org.javacream.training.jms.transactional;
+package org.javacream.training.activemq.redelivery;
 
 import javax.jms.Connection;
 import javax.jms.JMSException;

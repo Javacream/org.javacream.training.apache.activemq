@@ -1,5 +1,5 @@
 
-package org.javacream.training.app.jms.news;
+package org.javacream.training.jms.messageselector;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -21,7 +21,7 @@ public class DurableNewsConsumer {
 			Connection conn = factory.createConnection();
 			conn.setClientID("sawitzki");
 			Session session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
-			Topic topic = session.createTopic("newsTopic");
+			Topic topic = session.createTopic("JAVACREAM.TOPIC.NEWSTOPIC");
 			String subscriptionId="news";
 			String messageSelector = "category='" + category + "'";
 			MessageConsumer consumer = session.createDurableSubscriber(topic, subscriptionId, messageSelector, true);

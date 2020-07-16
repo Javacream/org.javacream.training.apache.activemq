@@ -20,11 +20,11 @@ public class SimpleDurableSubscriberConsumer {
 		Connection connection = connectionFactory.createConnection();
 
 		//
-		connection.setClientID("Sawitzki");
+		connection.setClientID("javacream");
 		//
 		session = connection.createSession(false,
 				Session.AUTO_ACKNOWLEDGE);
-		Topic destination = session.createTopic("topic/Durable");
+		Topic destination = session.createTopic("JAVACREAM.TOPIC.DURABLE");
 
 
 		connection.start();

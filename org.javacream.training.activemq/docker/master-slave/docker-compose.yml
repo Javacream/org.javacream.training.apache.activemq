@@ -1,0 +1,18 @@
+version: "3"
+services:
+  activemq1:
+    image: javacream/activemq:1.0
+    ports:
+      - 61616:61616
+      - 8161:8161
+    volumes:
+      - activemq_data:/opt/activemq/data
+  activemq2:
+    image: javacream/activemq:1.0
+    ports:
+      - 51515:61616
+      - 7161:8161
+    volumes:
+      - activemq_data:/opt/activemq/data
+volumes:
+  activemq_data:

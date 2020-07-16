@@ -19,12 +19,12 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 
 public abstract class JmsUtil {
 
-	public static final String URL = "tcp://localhost:61616";
+	public static final String DEFAULT_URL = "tcp://localhost:61616";
 	private static ActiveMQConnectionFactory factory;
 
 	public static ConnectionFactory getConnectionFactory() {
 		if (factory == null) {
-			factory = new ActiveMQConnectionFactory(URL);
+			factory = new ActiveMQConnectionFactory(DEFAULT_URL);
 		}
 		return factory;
 

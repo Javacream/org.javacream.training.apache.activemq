@@ -1,26 +1,29 @@
 package org.javacream.training.jms.acknowledge;
 
+import javax.jms.Connection;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.Session;
 
-import org.javacream.training.util.jms.JmsBase;
 import org.javacream.training.util.jms.JmsUtil;
 
-public class SimpleConsumer extends JmsBase{
+public class SimpleConsumer{
 
-	public SimpleConsumer(){
-		super(false, Session.AUTO_ACKNOWLEDGE);
-		JmsUtil.setListener(getSession(), JmsUtil.createQueue(getSession(), AcknowledgeConstants.DESTINATION_CONSUMER), new BusinessMessageListener());
+	private Session session;
+
+	public SimpleConsumer() throws JMSException{
+		Connection connection = JmsUtil.getConnectionFactory().createConnection();
+		session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+		JmsUtil.setListener(session, JmsUtil.createQueue(session, AcknowledgeConstants.DESTINATION_CONSUMER), new BusinessMessageListener());
 		try {
-			getConnection().start();
+			connection.start();
 		} catch (JMSException e) {
 			throw new RuntimeException(e);
 		}
 
 	}
-	public static void main(String[] args) {
+	public static void main(String[] args) throws JMSException {
 		new SimpleConsumer();
 	}
 	

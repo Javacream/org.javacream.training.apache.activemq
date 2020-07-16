@@ -1,4 +1,4 @@
-package org.javacream.training.app.jms.news;
+package org.javacream.training.jms.messageselector;
 
 import javax.jms.JMSException;
 import javax.jms.Message;

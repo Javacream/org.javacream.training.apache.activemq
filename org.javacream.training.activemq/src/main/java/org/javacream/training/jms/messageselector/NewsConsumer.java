@@ -1,5 +1,5 @@
 
-package org.javacream.training.app.jms.news;
+package org.javacream.training.jms.messageselector;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -20,7 +20,7 @@ public class NewsConsumer {
 			ConnectionFactory factory = JmsUtil.getConnectionFactory();
 			Connection conn = factory.createConnection();
 			Session session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
-			Destination destination = session.createTopic("newsTopic");
+			Destination destination = session.createTopic("JAVACREAM.TOPIC.NEWSTOPIC");
 			MessageConsumer consumer = session.createConsumer(destination, "category='" + category + "'");
 			conn.start();
 			NewsMessageListener demoMessageListener = new NewsMessageListener();

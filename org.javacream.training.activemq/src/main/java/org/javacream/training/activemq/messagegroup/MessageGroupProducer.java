@@ -10,7 +10,7 @@ import javax.jms.Session;
 
 import org.javacream.training.util.jms.JmsUtil;
 
-public class Producer {
+public class MessageGroupProducer {
 
 	public static void main(String[] args) throws JMSException {
 
@@ -26,13 +26,13 @@ public class Producer {
 		connectionFactory = JmsUtil.getConnectionFactory();
 		connection = connectionFactory.createConnection();
 		session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-		destination = session.createQueue(Constants.DESTINATION);
+		destination = session.createQueue(MessageGroupConstants.DESTINATION);
 		messageProducer = session.createProducer(destination);
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 3; j++) {
 				message = session.createMessage();
-				message.setStringProperty(Constants.PARAM_KEY, "Hello JMS!");
-				message.setStringProperty(Constants.MESSAGE_GROUP_KEY, "Number" + i);
+				message.setStringProperty(MessageGroupConstants.PARAM_KEY, "Hello JMS!");
+				message.setStringProperty(MessageGroupConstants.MESSAGE_GROUP_KEY, "Number" + i);
 
 				messageProducer.send(message);
 			}

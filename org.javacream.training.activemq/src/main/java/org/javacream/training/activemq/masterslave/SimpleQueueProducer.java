@@ -1,8 +1,13 @@
-package org.javacream.training.jms.destination.queue;
+package org.javacream.training.activemq.masterslave;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
@@ -16,7 +21,8 @@ public class SimpleQueueProducer {
 	}
 
 	public void testJms() throws Exception {
-		ConnectionFactory connectionFactory = JmsUtil.getConnectionFactory();
+		String url = "failover:(tcp://localhost:61616,tcp://localhost:51515)?initialReconnectDelay=100";
+		ConnectionFactory connectionFactory = JmsUtil.getConnectionFactory(url);
 		Connection connection = connectionFactory.createConnection();
 		Session session = connection.createSession(false,
 				Session.AUTO_ACKNOWLEDGE);
@@ -24,9 +30,14 @@ public class SimpleQueueProducer {
 		Message request = session.createMessage();
 		request.setStringProperty("param", "Hello!");
 		MessageProducer messageProducer = session.createProducer(destination);
-		messageProducer.send(request);
-		messageProducer.close();
-		connection.close();
+		ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+		executorService.scheduleAtFixedRate(() -> {
+			try {
+				messageProducer.send(request);
+			} catch (JMSException e) {
+				System.err.println("Exception sending message: " + e.getMessage());
+			}
+		}, 0, 4, TimeUnit.SECONDS);
 	} 
 
 }

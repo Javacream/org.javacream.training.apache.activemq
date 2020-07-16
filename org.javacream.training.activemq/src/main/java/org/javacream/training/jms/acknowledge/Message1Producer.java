@@ -5,29 +5,24 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
-import org.javacream.training.util.jms.JmsBase;
 import org.javacream.training.util.jms.JmsUtil;
 
-public class Message1Producer extends JmsBase {
+public class Message1Producer{
 
-	public Message1Producer() {
-		super(false, Session.AUTO_ACKNOWLEDGE);
-	}
-
-	public static void main(String[] args) {
+	public static void main(String[] args) throws JMSException{
 		new Message1Producer().execute();
 	}
 
-	public void execute() {
-		Message message = JmsUtil.createMessage(getSession());
+	public void execute() throws JMSException{
+		Session session = JmsUtil.getConnectionFactory().createConnection().createSession(false, Session.AUTO_ACKNOWLEDGE);
+		Message message = JmsUtil.createMessage(session);
 		try {
 			message.setStringProperty(AcknowledgeConstants.KEY, "1");
 		} catch (JMSException e) {
 			throw new RuntimeException(e);
 		}
-		Destination destination = JmsUtil.createQueue(getSession(),
+		Destination destination = JmsUtil.createQueue(session,
 				AcknowledgeConstants.DESTINATION_AGGREGATOR);
-		JmsUtil.send(getSession(), destination, message);
-		close();
+		JmsUtil.send(session, destination, message);
 	}
 }

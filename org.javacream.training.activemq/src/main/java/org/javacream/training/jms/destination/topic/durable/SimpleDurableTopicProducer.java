@@ -19,7 +19,7 @@ public class SimpleDurableTopicProducer {
 		Connection connection = connectionFactory.createConnection();
 		Session session = connection.createSession(false,
 				Session.AUTO_ACKNOWLEDGE);
-		Destination destination = session.createTopic("topic/Durable");
+		Destination destination = session.createTopic("JAVACREAM.TOPIC.DURABLE");
 		Message request = session.createMessage();
 		request.setStringProperty("toEcho", "goodbye!");
 		MessageProducer messageProducer = session.createProducer(destination);

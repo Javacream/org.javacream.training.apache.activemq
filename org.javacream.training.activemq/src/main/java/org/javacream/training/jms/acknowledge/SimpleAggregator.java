@@ -1,28 +1,30 @@
 package org.javacream.training.jms.acknowledge;
 
+import javax.jms.Connection;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.Session;
 
-import org.javacream.training.util.jms.JmsBase;
 import org.javacream.training.util.jms.JmsUtil;
 
-public class SimpleAggregator extends JmsBase {
+public class SimpleAggregator{
 	private Message initiator1Message;
 	private Message initiator2Message;
+	private Session session;
 
-	public SimpleAggregator(){
-		super(false, Session.CLIENT_ACKNOWLEDGE);
-		JmsUtil.setListener(getSession(), JmsUtil.createQueue(getSession(), AcknowledgeConstants.DESTINATION_AGGREGATOR), new DispatchingMessageListener());
+	public SimpleAggregator() throws JMSException {
+		Connection connection = JmsUtil.getConnectionFactory().createConnection();
+		session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
+		JmsUtil.setListener(session, JmsUtil.createQueue(session, AcknowledgeConstants.DESTINATION_AGGREGATOR), new DispatchingMessageListener());
 		try {
-			getConnection().start();
+			connection.start();
 		} catch (JMSException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws JMSException {
 		new SimpleAggregator();
 	}
 	
@@ -44,8 +46,8 @@ public class SimpleAggregator extends JmsBase {
 				if (initiator1Message != null && initiator2Message != null) {
 					message.acknowledge();
 					JmsUtil.send(
-							getSession(),
-							JmsUtil.createQueue(getSession(), AcknowledgeConstants.DESTINATION_CONSUMER),
+							session,
+							JmsUtil.createQueue(session, AcknowledgeConstants.DESTINATION_CONSUMER),
 							message);
 					initiator1Message = null;
 					initiator2Message = null;

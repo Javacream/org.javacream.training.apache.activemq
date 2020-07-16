@@ -1,0 +1,59 @@
+<spring:beans
+  xmlns:spring="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://activemq.apache.org/schema/core"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+    <spring:bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <spring:property name="locations">
+            <spring:value>file:${activemq.conf}/credentials.properties</spring:value>
+        </spring:property>
+    </spring:bean>
+    <spring:bean id="logQuery" class="io.fabric8.insight.log.log4j.Log4jLogQuery"
+          lazy-init="false" scope="singleton"
+          init-method="start" destroy-method="stop">
+    </spring:bean>
+    <broker brokerName="localhost" dataDirectory="${activemq.data}" >
+        <destinationPolicy>
+            <policyMap>
+              <policyEntries>
+                <policyEntry queue=">" >
+                <deadLetterStrategy>
+                <sharedDeadLetterStrategy processExpired="true" processNonPersistent="true" />
+                </deadLetterStrategy>
+                </policyEntry>
+              </policyEntries>
+            </policyMap>
+        </destinationPolicy>
+        <managementContext>
+            <managementContext createConnector="false"/>
+        </managementContext>
+        <persistenceAdapter>
+            <kahaDB directory="${activemq.data}/kahadb"/>
+        </persistenceAdapter>
+          <systemUsage>
+            <systemUsage>
+                <memoryUsage>
+                    <memoryUsage percentOfJvmHeap="70" />
+                </memoryUsage>
+                <storeUsage>
+                    <storeUsage limit="100 gb"/>
+                </storeUsage>
+                <tempUsage>
+                    <tempUsage limit="50 gb"/>
+                </tempUsage>
+            </systemUsage>
+        </systemUsage>
+        <transportConnectors>
+            <!-- DOS protection, limit concurrent connections to 1000 and frame size to 100MB -->
+            <transportConnector name="openwire" uri="tcp://0.0.0.0:61616?maximumConnections=1000&amp;wireFormat.maxFrameSize=104857600"/>
+        </transportConnectors>
+
+        <shutdownHooks>
+            <bean xmlns="http://www.springframework.org/schema/beans" class="org.apache.activemq.hooks.SpringContextHook" />
+        </shutdownHooks>
+
+    </broker>
+    <spring:import resource="jetty.xml"/>
+
+</spring:beans>
