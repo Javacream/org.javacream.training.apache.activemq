@@ -14,6 +14,6 @@
   * Mittagspause 45’, Kaffeepausen nach Bedarf
   * Vorschlag: Pausenzeit gesamt etwa 1:00h
   * Zeitplan 
-    * Mi.: 10:00-17:00
-    * Do.:  9:00-17:00
-    * Fr.:  9:00-14:00
+    * Mi.:  9:45-17:15
+    * Do.:  8:30-17:00
+    * Fr.:  8:30-12:45
