@@ -1,0 +1,9 @@
+services:
+  artemis:
+    image: apache/activemq-artemis:2.37.0
+    environment:
+      ARTEMIS_USERNAME: artemis
+      ARTEMIS_PASSWORD: simetraehcapa
+    ports:
+      - "61616:61616"
+      - "8161:8161"
