@@ -2,18 +2,15 @@ package org.javacream.training.jms.basic;
 
 import javax.jms.Queue;
 import javax.jms.Session;
-import javax.jms.TextMessage;
-
 import static org.javacream.training.jms.ApplicationConfiguration.*;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 
-public class SimpleJmsConsumer {
+public class SimpleJmsQueueProducer {
 	
 	public Session createSession() throws Exception{
 		var connectionFactory = new ActiveMQConnectionFactory(brokerURL);
 		var connection = connectionFactory.createConnection(username, password);
 		var session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-		connection.start();
 		return session;
 	}
 	
@@ -21,18 +18,16 @@ public class SimpleJmsConsumer {
 		return session.createQueue(queueName);
 	}
 	
-	public void receiveMessage(Session session) throws Exception {
-		var messageConsumer = session.createConsumer(getQueue(session));
-		var message = messageConsumer.receive();
-		var textMessage = (TextMessage) message;
-		var text = textMessage.getText();
-		System.out.println(text);
+	public void sendMessage(Session session, String text) throws Exception {
+		var message = session.createTextMessage(text);
+		var messageProducer = session.createProducer(getQueue(session));
+		messageProducer.send(message);
 	}
 	
 	public static void main(String[] args) throws Exception{
-		var simpleJmsProducer = new SimpleJmsConsumer();
+		var simpleJmsProducer = new SimpleJmsQueueProducer();
 		var session = simpleJmsProducer.createSession();
-		simpleJmsProducer.receiveMessage(session);
+		simpleJmsProducer.sendMessage(session, "Hugo");
 	}
 	
 
