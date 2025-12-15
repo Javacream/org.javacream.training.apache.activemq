@@ -6,6 +6,8 @@ public interface ApplicationConfiguration {
 	String topicName = "exampleTopic";
 	String username = "artemis";
 	String password = "simetraehcapa";
+	String subscription = "javacream";
+	String clientId = "training";
 
 
 }
