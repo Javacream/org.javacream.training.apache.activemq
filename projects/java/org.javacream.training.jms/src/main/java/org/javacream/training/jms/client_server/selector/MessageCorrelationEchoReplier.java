@@ -13,7 +13,7 @@ import javax.jms.Session;
 import org.javacream.training.jms.ApplicationConfiguration;
 import org.javacream.training.jms.util.JmsUtil;
 
-public class MessageCorrelationEchoServer {
+public class MessageCorrelationEchoReplier {
 
 	private static Session session;
 

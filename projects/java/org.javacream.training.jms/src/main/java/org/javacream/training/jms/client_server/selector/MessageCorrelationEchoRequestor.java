@@ -11,10 +11,10 @@ import javax.jms.Session;
 import org.javacream.training.jms.ApplicationConfiguration;
 import org.javacream.training.jms.util.JmsUtil;
 
-public class MessageCorrelationEchoClient {
+public class MessageCorrelationEchoRequestor {
 
 	public static void main(String[] args) throws Exception {
-		new MessageCorrelationEchoClient().testJms();
+		new MessageCorrelationEchoRequestor().testJms();
 	}
 	public void testJms() throws Exception {
 		
