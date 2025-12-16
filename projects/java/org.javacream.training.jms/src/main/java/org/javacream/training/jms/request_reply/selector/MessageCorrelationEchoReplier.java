@@ -1,4 +1,4 @@
-package org.javacream.training.jms.client_server.selector;
+package org.javacream.training.jms.request_reply.selector;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
