@@ -8,6 +8,7 @@ import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 
+import org.javacream.training.jms.ApplicationConfiguration;
 import org.javacream.training.jms.util.JmsUtil;
 
 public class MessageCorrelationEchoClient {
@@ -21,7 +22,7 @@ public class MessageCorrelationEchoClient {
 		
 		ConnectionFactory connectionFactory = JmsUtil.getConnectionFactory();
 		
-		Connection connection = connectionFactory.createConnection();
+		Connection connection = connectionFactory.createConnection(ApplicationConfiguration.username, ApplicationConfiguration.password);
 
 		Session session = connection.createSession(false,
 				Session.AUTO_ACKNOWLEDGE);
