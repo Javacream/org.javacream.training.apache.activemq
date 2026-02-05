@@ -1,4 +1,7 @@
 package org.javacream.training.jms.basic;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
@@ -6,7 +9,7 @@ import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.javacream.training.jms.BrokerConfiguration;
 
 
-public class Consumer {
+public class ConsumerWithMessagListener {
 
 	public static void main(String[] args) throws Exception{
 		var connectionFactory = new ActiveMQConnectionFactory(BrokerConfiguration.brokerUrl);
@@ -17,11 +20,24 @@ public class Consumer {
 
 		var consumer = session.createConsumer(destination);
 		connection.start();
-		var message = consumer.receive();
-		var textMessage = (TextMessage)message;
-		System.out.println(textMessage.getText());
-		connection.close();
-		connectionFactory.close();
+		consumer.setMessageListener(new MyListener());
+		var sync = new Object();
+		sync.wait();
+		//connection.close();
+		//connectionFactory.close();
 	}
 
+	static class MyListener implements MessageListener{
+
+		@Override
+		public void onMessage(Message message) {
+			var textMessage = (TextMessage)message;
+			try {
+				System.out.println(textMessage.getText());
+			} catch (JMSException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
 }

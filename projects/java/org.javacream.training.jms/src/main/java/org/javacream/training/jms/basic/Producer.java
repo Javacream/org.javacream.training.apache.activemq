@@ -11,10 +11,11 @@ public class Producer {
 		var connectionFactory = new ActiveMQConnectionFactory(BrokerConfiguration.brokerUrl);
 		var connection = connectionFactory.createConnection(BrokerConfiguration.username, BrokerConfiguration.password);
 		var session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-		// var queue = session.createQueue(BrokerConfiguration.queueName);
-		var topic = session.createTopic(BrokerConfiguration.topicName);
+		var destination = session.createQueue(BrokerConfiguration.queueName);
+		//var destination = session.createTopic(BrokerConfiguration.topicName);
 		var message = session.createTextMessage("Hello");
-		var messageProducer = session.createProducer(topic);
+		message.setStringProperty("hugo", "Emil");
+		var messageProducer = session.createProducer(destination);
 		messageProducer.send(message);
 		connection.close();
 		connectionFactory.close();
