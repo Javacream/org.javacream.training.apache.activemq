@@ -29,7 +29,6 @@ public class EchoServer {
 					var producer = session.createProducer(responseDestination);
 					System.out.println("Received message " + message);
 					var responseMessage = session.createTextMessage(((TextMessage)message).getText());
-					responseMessage.setJMSCorrelationID(message.getJMSMessageID());
 					producer.send(responseMessage);
 					producer.close();
 				} catch (JMSException e) {
