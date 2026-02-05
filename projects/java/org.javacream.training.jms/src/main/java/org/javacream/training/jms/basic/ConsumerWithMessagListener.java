@@ -17,12 +17,14 @@ public class ConsumerWithMessagListener {
 		var session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 		var destination = session.createQueue(BrokerConfiguration.queueName);
 		//var topic = session.createTopic(BrokerConfiguration.topicName);
-
-		var consumer = session.createConsumer(destination);
+		var selector = "hugo = 'Emil' and this='that'";
+		var consumer = session.createConsumer(destination, selector);
 		connection.start();
 		consumer.setMessageListener(new MyListener());
 		var sync = new Object();
-		sync.wait();
+		synchronized(sync) {
+			sync.wait();
+		}
 		//connection.close();
 		//connectionFactory.close();
 	}
