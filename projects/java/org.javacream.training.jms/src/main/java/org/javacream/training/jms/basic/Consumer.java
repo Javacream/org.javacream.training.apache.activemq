@@ -12,8 +12,10 @@ public class Consumer {
 		var connectionFactory = new ActiveMQConnectionFactory(BrokerConfiguration.brokerUrl);
 		var connection = connectionFactory.createConnection(BrokerConfiguration.username, BrokerConfiguration.password);
 		var session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-		var queue = session.createQueue(BrokerConfiguration.queueName);
-		var consumer = session.createConsumer(queue);
+		//var queue = session.createQueue(BrokerConfiguration.queueName);
+		var topic = session.createTopic(BrokerConfiguration.topicName);
+
+		var consumer = session.createConsumer(topic);
 		connection.start();
 		var message = consumer.receive();
 		var textMessage = (TextMessage)message;

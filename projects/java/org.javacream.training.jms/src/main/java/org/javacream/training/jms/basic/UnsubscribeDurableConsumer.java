@@ -5,20 +5,16 @@ import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.javacream.training.jms.BrokerConfiguration;
 
 
-public class Producer {
+public class UnsubscribeDurableConsumer {
 
 	public static void main(String[] args) throws Exception{
 		var connectionFactory = new ActiveMQConnectionFactory(BrokerConfiguration.brokerUrl);
 		var connection = connectionFactory.createConnection(BrokerConfiguration.username, BrokerConfiguration.password);
+		connection.setClientID("sawitzki");
 		var session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-		// var queue = session.createQueue(BrokerConfiguration.queueName);
-		var topic = session.createTopic(BrokerConfiguration.topicName);
-		var message = session.createTextMessage("Hello");
-		var messageProducer = session.createProducer(topic);
-		messageProducer.send(message);
+		session.unsubscribe("demo");
 		connection.close();
 		connectionFactory.close();
-		
 	}
 
 }
