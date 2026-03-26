@@ -38,8 +38,12 @@ class SimpleMessageListener implements MessageListener{
 		try {
 			System.out.println(textMessage.getText());
 			if (message.getBooleanProperty("finish")){  
+				System.out.println("acknowledge");
 				message.acknowledge();
+			}else{  
+				System.out.println("Message " + message.getJMSMessageID() + "received but not acknowledged" );
 			}
+				
 		}
 		catch(JMSException e) {
 			System.out.println(e.getMessage());

@@ -13,7 +13,7 @@ public class TopicProducer {
 		var session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 		var destination = session.createTopic(DestinationConfiguration.destinationName);
 		var message = session.createTextMessage("Hello");
-		message.setBooleanProperty("finish", true);
+		message.setBooleanProperty("finish", false);
 		var messageProducer = session.createProducer(destination);
 		messageProducer.send(message);
 		connection.close();
