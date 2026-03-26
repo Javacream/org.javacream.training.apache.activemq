@@ -1,6 +1,5 @@
 package org.javacream.training.jms.echo;
 
-import javax.jms.JMSException;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
@@ -23,23 +22,10 @@ public class EchoClient {
 		System.out.println(messageId);
 		var consumer = session.createConsumer(responseDestination, "JMSCorrelationID = '" + messageId + "'");
 		connection.start();
-		Object sync = new Object();
-		consumer.setMessageListener(m -> {
-			var response = (TextMessage)m;
-			try {
-				System.out.println(response.getText());
-				synchronized(sync) {
-					sync.notify();
-				}	
-			} catch (JMSException e) {
-				e.printStackTrace();
-			}
-		});
-		synchronized(sync) {
-			sync.wait();
-		}
-
-		
+		var response = (TextMessage)consumer.receive();
+		System.out.println(response.getText());
+		connection.close();
+		connectionFactory.close();
 		
 	}
 
