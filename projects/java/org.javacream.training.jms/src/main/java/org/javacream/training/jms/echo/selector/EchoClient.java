@@ -1,4 +1,4 @@
-package org.javacream.training.jms.echo;
+package org.javacream.training.jms.echo.selector;
 
 import javax.jms.Session;
 import javax.jms.TextMessage;

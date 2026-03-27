@@ -1,4 +1,4 @@
-package org.javacream.training.jms.echo;
+package org.javacream.training.jms.echo.selector;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
